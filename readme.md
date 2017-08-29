@@ -1,6 +1,15 @@
 # Sketch Material
 > Sketch material is a sketch plugin that will help you generate complex material components like tables, chips, forms etc…
 
+## File where is any script declaration -->
+menus --> manifest.json (commands in md.sketchscript)
+md.sketchscript (commands declaration here, invoke any script in init.js)
+
+## Plugins modals -->
+html for plugins are inside the folder ./Contents/Sketch/scripts/panel/
+The folder ./Contents/Sketch/scripts/ contains scripts to show modals and other
+panel
+
 ## Requirement
 
 - Sketch 45 or above

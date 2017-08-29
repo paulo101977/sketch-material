@@ -22,6 +22,18 @@
           "commandButtonRaisedDisabled"
         ]
       },
+      {
+        "title": "New Button",
+        "items": [
+          "commandButtonFlat",
+          "commandButtonFlatPressed",
+          "commandButtonFlatDisabled",
+          "-",
+          "commandButtonRaised",
+          "commandButtonRaisedPressed",
+          "commandButtonRaisedDisabled"
+        ]
+      },
       "commandChips",
       "commandDialogs",
       "commandForms",
