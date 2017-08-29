@@ -2,7 +2,13 @@ var gulp = require('gulp'),
   watch = require('gulp-watch'),
   concat = require('gulp-concat'),
   less = require('gulp-less'),
+  foreach = require('gulp-foreach'),
+  inject = require('gulp-inject-string'),
+  runSequence = require('run-sequence'),
+  clean = require('gulp-clean'),
   path = require('path');
+
+var browserSync = require('browser-sync').create();
 
 gulp.task('scripts', function() {
   return gulp.src([
@@ -28,8 +34,68 @@ gulp.task('less', function () {
     .pipe(gulp.dest('../scripts/panel/assets/css/'));
 });
 
+gulp.task('inject:links' , function(){
+
+    return gulp.src(['../scripts/panel/*.html', '!../scripts/panel/index.html'])
+      .pipe(
+        foreach(function(stream, file){
+          //var file = file.path.split('/')[file.path.split('/').length-1]
+          var name = path.basename(file.path);
+          var fileContent = "<b>"
+                              + "<a target='_blank' href='./"+ name +"'>" + name + "</a>"
+                            + "</b>"
+                            + "<br />"
+
+          return gulp
+            .src('../scripts/tmp/index.html')
+            .pipe(
+              inject.after(
+                '<body>',
+                  fileContent
+              )
+            )
+            .pipe(gulp.dest('../scripts/tmp/'))
+        })
+      )
+      //.pipe(gulp.dest('./tmp/'));
+  })
+
+
+gulp.task('update', function(){
+  runSequence(
+    'clean',
+    'copy:html:tmp' ,
+    'inject:links',
+    'copy:html',
+    'clean'
+  )
+})
+
+gulp.task('clean', function(){
+  return gulp.src('../scripts/tmp/', {read: false})
+    .pipe(clean({force: true}));
+})
+
+
+gulp.task('copy:html', function(){
+  return gulp
+    .src('../scripts/tmp/index.html')
+    .pipe(gulp.dest('../scripts/panel/'))
+})
+
+gulp.task('copy:html:tmp', function(){
+  return gulp
+    .src('./index.html')
+    .pipe(gulp.dest('../scripts/tmp/'))
+})
+
 
 gulp.task('watch', function () {
-  gulp.watch(['**/*.js'], ['scripts']);
-  gulp.watch(['**/*.less'], ['less']);
+  browserSync.init({
+      server: "../scripts/panel",
+      port: 8080
+  });
+  gulp.watch(['../scripts/**/*.*', '!../scripts/tmp/'], ['update']).on('change', browserSync.reload);
+  gulp.watch(['**/*.js', '!gulpfile.js'], ['scripts']).on('change', browserSync.reload);
+  gulp.watch(['**/*.less'], ['less']).on('change', browserSync.reload);
 });

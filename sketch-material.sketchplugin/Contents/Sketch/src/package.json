@@ -4,7 +4,12 @@
   "description": "",
   "main": "gulpfile.js",
   "dependencies": {
-    "gulp": "^3.9.1"
+    "browser-sync": "^2.18.13",
+    "gulp": "^3.9.1",
+    "gulp-clean": "^0.3.2",
+    "gulp-foreach": "^0.1.0",
+    "gulp-inject-string": "^1.1.0",
+    "run-sequence": "^2.1.0"
   },
   "devDependencies": {
     "gulp-concat": "^2.6.1",
