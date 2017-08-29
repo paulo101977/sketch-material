@@ -25,13 +25,7 @@
       {
         "title": "New Button",
         "items": [
-          "commandButtonFlat",
-          "commandButtonFlatPressed",
-          "commandButtonFlatDisabled",
-          "-",
-          "commandButtonRaised",
-          "commandButtonRaisedPressed",
-          "commandButtonRaisedDisabled"
+          "commandButtonTest"
         ]
       },
       "commandChips",
@@ -72,6 +66,12 @@
       "handler": "commandIcons",
       "script": "md.sketchscript",
       "shortcut": "cmd + shift + i"
+    },
+    {
+      "name" : "Button Test",
+      "identifier": "commandButtonTest",
+      "handler" : "commandButtonTest",
+      "script" : "md.sketchscript"
     },
     {
       "name": "Flat Button",

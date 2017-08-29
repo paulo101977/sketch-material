@@ -238,6 +238,27 @@ MD.extend({
 
     return result;
   },
+  // TODO: remove if necessary
+  buttonPanelTest: function () {
+    var self = this,
+      data = {};
+
+    // data.placements = (this.configs.spacings && this.configs.spacings.placements)? this.configs.spacings.placements: ["top", "left"];
+    // if(this.configs.spacings && this.configs.spacings.byPercentage) data.byPercentage = this.configs.spacings.byPercentage;
+
+    return this.MDPanel({
+      //TODO: create the html buttontest.html
+      url: this.pluginSketch + "/panel/buttontest.html",
+      width: 800,
+      height: 600,
+      data: data,
+      callback: function (data) {
+        self.configs = self.setConfigs({
+          buttonstest: data //TODO: find how define it.
+        });
+      }
+    });
+  },
 
   chipsPanel: function () {
     var self = this,

@@ -52,6 +52,10 @@ var MD = {
         case "generate-chips":
           this.Chip().generateChips();
           break;
+        //TODO: just for tests
+        case "generate-buttontest":
+          this.ButtonTest().generateChips();
+          break;
         case "generate-dialogs":
           this.Dialog().generateDialogs();
           break;
@@ -91,5 +95,3 @@ var MD = {
     return target;
   }
 };
-
-

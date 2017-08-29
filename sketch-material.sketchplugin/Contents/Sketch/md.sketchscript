@@ -12,6 +12,9 @@ function commandButtonRaised(context) { MD.init(context, 'generate-button', 'rai
 function commandButtonRaisedPressed(context) { MD.init(context, 'generate-button', 'raised,pressed')}
 function commandButtonRaisedDisabled(context) { MD.init(context, 'generate-button', 'raised,disabled')}
 
+//buttontest
+function commandButtonTest(context) { MD.init(context, "generate-buttontest"); }
+
 // Chips
 function commandChips(context) { MD.init(context, "generate-chips"); }
 
