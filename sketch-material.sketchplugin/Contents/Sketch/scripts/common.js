@@ -53,8 +53,8 @@ var MD = {
           this.Chip().generateChips();
           break;
         //TODO: just for tests
-        case "generate-buttontest":
-          this.ButtonTest().generateChips();
+        case "generate-buttonoi":
+          this.ButtonOi().generateButtons(args);
           break;
         case "generate-dialogs":
           this.Dialog().generateDialogs();
@@ -710,7 +710,7 @@ MD.extend({
 
     style = (!style || this.is(style, MSSharedStyle)) ? style : style[0];
 
-    if (style == false) {
+    if (style == false && color) {
       style = MSStyle.alloc().init();
 
       var color = MSColor.colorWithRed_green_blue_alpha(color.r, color.g, color.b, color.a),
@@ -729,11 +729,11 @@ MD.extend({
 
       sharedStyles.addSharedStyleWithName_firstInstance(name, style);
     }
-
     return (style.newInstance) ? style.newInstance() : style;
   },
 
   sharedTextStyle: function(name, color, alignment, fontFamily, fontSize, lineHeight, leading) {
+
     var sharedStyles = this.document.documentData().layerTextStyles(),
     style = this.find({
       key: "(name != NULL) && (name == %@)",
@@ -1405,6 +1405,9 @@ MD.extend({
         case "inktip":
           this.importInkTipStyles();
           break;
+        case "buttonoi":
+            this.importButtonStylesOi();
+            break;
         case "button":
           this.importButtonStyles();
           break;
@@ -1474,6 +1477,24 @@ MD.extend({
     this.importSymbols('tables', ['…table-pagination']);
   },
 
+  importButtonStylesOi: function () {
+    var buttonsPath = this.resources + '/buttonsoi.sketch';
+    var buttonsUrl = NSURL.fileURLWithPath(buttonsPath);
+    var styles = {
+      layerStyles: [
+              '..button-primary-primary-bg' ,
+              '..button-secundary-secundary-bg',
+              '..button-primary-disabled-bg'
+            ],
+      textStyles: [
+          '..button-text-primary',
+          '..button-text-secundary',
+          '..button-text-disabled'
+      ]
+    }
+    this.importSharedStyles(buttonsUrl, styles);
+  },
+
   importButtonStyles: function () {
     var buttonsPath = this.resources + '/buttons.sketch';
     var buttonsUrl = NSURL.fileURLWithPath(buttonsPath);
@@ -1517,6 +1538,7 @@ MD.extend({
    * @param {object} styles
    */
   removeExistingStyleNamesFromList: function (styles) {
+    //TODO: any problem from here
     var layerStyles = this.documentData.layerStyles(),
       textStyles = this.documentData.layerTextStyles(),
       result = {
@@ -1524,14 +1546,41 @@ MD.extend({
         textStyles: []
       };
 
+    log('styles')
+    log(styles)
+    log('layerStyles')
+    log(layerStyles)
+    log('textStyles')
+    log(textStyles)
+
     if (styles.layerStyles) {
       for (var i = 0; i < styles.layerStyles.length; i++) {
         var style = this.find({
           key: "(name != NULL) && (name == %@)",
           match: styles.layerStyles[i]
         }, layerStyles);
+        log('layer')
+        log(style)
         if (!style) {
           result.layerStyles.push(styles.layerStyles[i]);
+        } else {
+          style = (style + '');
+          if(style.indexOf('>') != -1 && style.indexOf('(') != -1){
+            style = (style + '')
+                      .split('>')[1]
+                      .split('(')[0]
+                      .trim();
+          } else if(style.indexOf('>') != -1){
+            style = (style + '')
+                      .split('>')[1]
+                      .trim();
+          } else if(style.indexOf('(') != -1){
+            style = (style + '')
+                      .split('(')[0]
+                      .trim();
+          }
+
+          result.layerStyles.push(style);
         }
       }
     }
@@ -1544,10 +1593,28 @@ MD.extend({
         }, textStyles);
         if (!style) {
           result.textStyles.push(styles.textStyles[i]);
+        } else {
+          style = (style + '');
+          if(style.indexOf('>') != -1 && style.indexOf('(') != -1){
+            style = (style + '')
+                      .split('>')[1]
+                      .split('(')[0]
+                      .trim();
+          } else if(style.indexOf('>') != -1){
+            style = (style + '')
+                      .split('>')[1]
+                      .trim();
+          } else if(style.indexOf('(') != -1){
+            style = (style + '')
+                      .split('(')[0]
+                      .trim();
+          }
+          result.textStyles.push(style);
         }
       }
     }
 
+    log(result)
     return result;
   },
 
@@ -1705,6 +1772,9 @@ sketchObjectFromArchiveData: function(archiveData) {
    */
   importSharedStyles: function (url, styles, all) {
 
+    log('importSharedStyles')
+    log(styles)
+
     styles = this.removeExistingStyleNamesFromList(styles);
 
     if ((styles.layerStyles.length < 1 && styles.textStyles.length < 1) && !all) {
@@ -1727,12 +1797,15 @@ sketchObjectFromArchiveData: function(archiveData) {
 
         for(var i = 0; i < layerStyleCount; i++) {
           var style = layerStyles.sharedStyleAtIndex(i);
+
           var findLayerStyle = this.find({
             key: "(name != NULL) && (name == %@)",
             match: style.name()
           }, docLayerStyles);
 
           if(findLayerStyle == 0) {
+            log('layerStyleCount')
+            log(style)
             docLayerStyles.addSharedStyleWithName_firstInstance(style.name(), style.style());
           }
         }
@@ -1748,7 +1821,9 @@ sketchObjectFromArchiveData: function(archiveData) {
 
           // log(style.name() + " — " + style.objectID());
 
-          if(findTextStyle == 0) {
+          if(!([boolValue findTextStyle] == 0)) {
+            log('textStyleStyleCount')
+            log(style)
             docTextStyles.addSharedStyleWithName_firstInstance(style.name(), style.style());
           }
         }
@@ -1762,7 +1837,13 @@ sketchObjectFromArchiveData: function(archiveData) {
             key: "(name != NULL) && (name == %@)",
             match: styles.layerStyles[i]
           }, layerStyles);
-          this.documentData.layerStyles().addSharedStyleWithName_firstInstance(styles.layerStyles[i], style.style());
+
+          log('if styles.layerStyles')
+          log(style)
+          if(style != 0 && style.style)
+            this.documentData
+              .layerStyles()
+              .addSharedStyleWithName_firstInstance(styles.layerStyles[i], style.style());
         }
       }
 
@@ -1773,7 +1854,18 @@ sketchObjectFromArchiveData: function(archiveData) {
             key: "(name != NULL) && (name == %@)",
             match: styles.textStyles[i]
           }, textStyles);
-          this.documentData.layerTextStyles().addSharedStyleWithName_firstInstance(styles.textStyles[i], style.style());
+
+          log('if styles.textStyles')
+          log(style)
+          if(style != 0){
+            log('style')
+            log(style.style())
+            this.documentData
+                .layerTextStyles()
+                .addSharedStyleWithName_firstInstance(styles.textStyles[i], style.style());
+          }
+
+
         }
       }
 
@@ -1886,6 +1978,132 @@ MD['Button'] = function () {
   _generateButtons = function (type) {
     var buttonType = type.split(',');
     MD.import('button');
+
+    if (selection.count() <= 0) {
+      MD.message("Select a text layer to make button");
+      return false;
+    }
+
+    for (var i = 0; i < selection.count(); i++) {
+      var target = selection[i];
+      _makeButtons(target, buttonType);
+    }
+  }
+
+  return {
+    generateButtons: _generateButtons
+  }
+};
+
+MD['ButtonOi'] = function () {
+
+  // Globals
+  var self = MD,
+    selection = MD.context.selection;
+
+  // Functions
+  var _generateButtons;
+
+  _getStyles = function (buttonType) {
+    var textStyle = '..button-text-primary', padding = 8;
+
+
+    if (buttonType[0] == 'raised') {
+      textStyle = "..button-text-primary";
+      padding = 16;
+    }
+
+    if (buttonType[0] == 'primary') {
+      textStyle = "..button-text-primary";
+      padding = 16;
+    }
+
+    if (buttonType[1] == 'disabled') {
+      textStyle = "..button-text-disabled";
+    }
+
+    buttonType[1] = buttonType[1] ? "-" + buttonType[1] : '';
+
+    log('_getStyles')
+    log('button, ' + '..button-' + buttonType[0] + buttonType[1] + '-bg\n')
+    log('style, ' + textStyle + '\n')
+
+    return {
+      bgStyle: '..button-' + buttonType[0] + buttonType[1] + '-bg',
+      textStyle: textStyle,
+      marginRight: padding,
+      marginLeft: padding,
+      marginTop: 10,
+      marginBottom: 10
+    }
+  }
+
+  _makeButtons = function (target, buttonType) {
+    var BUTTON_STYLES = _getStyles(buttonType);
+    var buttonGroup = MD.addGroup('button'),
+      buttonBg = MD.addShape(),
+      buttonText = MD.addText();
+
+    //set the style from sketch
+    var styleText = MD.sharedTextStyle(BUTTON_STYLES.textStyle);
+    if(styleText != 0) target.setStyle(styleText);
+
+    var bgStyle = MD.sharedLayerStyle(BUTTON_STYLES.bgStyle);
+    if(bgStyle != 0) buttonBg.setStyle(MD.sharedLayerStyle(BUTTON_STYLES.bgStyle));
+
+    var text = target.stringValue();
+    buttonGroup.setName('button–' + text.toLowerCase().split(' ').join(''));
+
+    //TODO: remove if necessary
+    log('buttonGroup.style')
+    //log(buttonGroup.style.opacity())
+    //buttonGroup.style.setFill("#00000000");
+
+    var buttonBgRect = MD.getRect(buttonBg);
+
+    targetRect = MD.getRect(target);
+
+    buttonBgRect.setX(targetRect.x);
+    buttonBgRect.setY(targetRect.y);
+
+    var width = targetRect.width;
+    var height = targetRect.height;
+
+    //get oi size similar to sketch
+    if(buttonType[0] == 'primary'){
+      width = 344;
+      height = 54;
+    } else {
+      width = width + BUTTON_STYLES.marginRight + BUTTON_STYLES.marginLeft;
+      height = height + BUTTON_STYLES.marginTop + BUTTON_STYLES.marginBottom;
+    }
+
+    buttonBgRect.setWidth(width);
+    buttonBgRect.setHeight(height);
+
+    target.setStringValue(text.toUpperCase());
+
+    buttonBg.layers().firstObject().setCornerRadiusFromComponents("2")
+
+    //center text
+    targetRect.setX(targetRect.x + (width/2 - targetRect.width/2));
+    targetRect.setY(targetRect.y +(height/2 - targetRect.height/2));
+
+    buttonGroup.addLayers([buttonBg, target]);
+    buttonGroup.resizeToFitChildrenWithOption(0);
+
+    target.select_byExpandingSelection(false, false);
+    buttonGroup.select_byExpandingSelection(true, true);
+
+    MD.current.addLayers([buttonGroup]);
+
+    MD.current.removeLayer(target);
+
+  }
+
+  _generateButtons = function (type) {
+    var buttonType = type.split(',');
+    MD.import('buttonoi');
 
     if (selection.count() <= 0) {
       MD.message("Select a text layer to make button");

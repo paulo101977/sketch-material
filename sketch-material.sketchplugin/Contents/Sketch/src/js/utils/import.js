@@ -23,6 +23,9 @@ MD.extend({
         case "inktip":
           this.importInkTipStyles();
           break;
+        case "buttonoi":
+            this.importButtonStylesOi();
+            break;
         case "button":
           this.importButtonStyles();
           break;
@@ -92,6 +95,24 @@ MD.extend({
     this.importSymbols('tables', ['…table-pagination']);
   },
 
+  importButtonStylesOi: function () {
+    var buttonsPath = this.resources + '/buttonsoi.sketch';
+    var buttonsUrl = NSURL.fileURLWithPath(buttonsPath);
+    var styles = {
+      layerStyles: [
+              '..button-primary-primary-bg' ,
+              '..button-secundary-secundary-bg',
+              '..button-primary-disabled-bg'
+            ],
+      textStyles: [
+          '..button-text-primary',
+          '..button-text-secundary',
+          '..button-text-disabled'
+      ]
+    }
+    this.importSharedStyles(buttonsUrl, styles);
+  },
+
   importButtonStyles: function () {
     var buttonsPath = this.resources + '/buttons.sketch';
     var buttonsUrl = NSURL.fileURLWithPath(buttonsPath);
@@ -135,6 +156,7 @@ MD.extend({
    * @param {object} styles
    */
   removeExistingStyleNamesFromList: function (styles) {
+    //TODO: any problem from here
     var layerStyles = this.documentData.layerStyles(),
       textStyles = this.documentData.layerTextStyles(),
       result = {
@@ -142,14 +164,41 @@ MD.extend({
         textStyles: []
       };
 
+    log('styles')
+    log(styles)
+    log('layerStyles')
+    log(layerStyles)
+    log('textStyles')
+    log(textStyles)
+
     if (styles.layerStyles) {
       for (var i = 0; i < styles.layerStyles.length; i++) {
         var style = this.find({
           key: "(name != NULL) && (name == %@)",
           match: styles.layerStyles[i]
         }, layerStyles);
+        log('layer')
+        log(style)
         if (!style) {
           result.layerStyles.push(styles.layerStyles[i]);
+        } else {
+          style = (style + '');
+          if(style.indexOf('>') != -1 && style.indexOf('(') != -1){
+            style = (style + '')
+                      .split('>')[1]
+                      .split('(')[0]
+                      .trim();
+          } else if(style.indexOf('>') != -1){
+            style = (style + '')
+                      .split('>')[1]
+                      .trim();
+          } else if(style.indexOf('(') != -1){
+            style = (style + '')
+                      .split('(')[0]
+                      .trim();
+          }
+
+          result.layerStyles.push(style);
         }
       }
     }
@@ -162,10 +211,28 @@ MD.extend({
         }, textStyles);
         if (!style) {
           result.textStyles.push(styles.textStyles[i]);
+        } else {
+          style = (style + '');
+          if(style.indexOf('>') != -1 && style.indexOf('(') != -1){
+            style = (style + '')
+                      .split('>')[1]
+                      .split('(')[0]
+                      .trim();
+          } else if(style.indexOf('>') != -1){
+            style = (style + '')
+                      .split('>')[1]
+                      .trim();
+          } else if(style.indexOf('(') != -1){
+            style = (style + '')
+                      .split('(')[0]
+                      .trim();
+          }
+          result.textStyles.push(style);
         }
       }
     }
 
+    log(result)
     return result;
   },
 
@@ -323,6 +390,9 @@ sketchObjectFromArchiveData: function(archiveData) {
    */
   importSharedStyles: function (url, styles, all) {
 
+    log('importSharedStyles')
+    log(styles)
+
     styles = this.removeExistingStyleNamesFromList(styles);
 
     if ((styles.layerStyles.length < 1 && styles.textStyles.length < 1) && !all) {
@@ -345,12 +415,15 @@ sketchObjectFromArchiveData: function(archiveData) {
 
         for(var i = 0; i < layerStyleCount; i++) {
           var style = layerStyles.sharedStyleAtIndex(i);
+
           var findLayerStyle = this.find({
             key: "(name != NULL) && (name == %@)",
             match: style.name()
           }, docLayerStyles);
 
           if(findLayerStyle == 0) {
+            log('layerStyleCount')
+            log(style)
             docLayerStyles.addSharedStyleWithName_firstInstance(style.name(), style.style());
           }
         }
@@ -366,7 +439,9 @@ sketchObjectFromArchiveData: function(archiveData) {
 
           // log(style.name() + " — " + style.objectID());
 
-          if(findTextStyle == 0) {
+          if(!([boolValue findTextStyle] == 0)) {
+            log('textStyleStyleCount')
+            log(style)
             docTextStyles.addSharedStyleWithName_firstInstance(style.name(), style.style());
           }
         }
@@ -380,7 +455,13 @@ sketchObjectFromArchiveData: function(archiveData) {
             key: "(name != NULL) && (name == %@)",
             match: styles.layerStyles[i]
           }, layerStyles);
-          this.documentData.layerStyles().addSharedStyleWithName_firstInstance(styles.layerStyles[i], style.style());
+
+          log('if styles.layerStyles')
+          log(style)
+          if(style != 0 && style.style)
+            this.documentData
+              .layerStyles()
+              .addSharedStyleWithName_firstInstance(styles.layerStyles[i], style.style());
         }
       }
 
@@ -391,7 +472,18 @@ sketchObjectFromArchiveData: function(archiveData) {
             key: "(name != NULL) && (name == %@)",
             match: styles.textStyles[i]
           }, textStyles);
-          this.documentData.layerTextStyles().addSharedStyleWithName_firstInstance(styles.textStyles[i], style.style());
+
+          log('if styles.textStyles')
+          log(style)
+          if(style != 0){
+            log('style')
+            log(style.style())
+            this.documentData
+                .layerTextStyles()
+                .addSharedStyleWithName_firstInstance(styles.textStyles[i], style.style());
+          }
+
+
         }
       }
 

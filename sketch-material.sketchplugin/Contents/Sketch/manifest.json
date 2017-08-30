@@ -23,9 +23,13 @@
         ]
       },
       {
-        "title": "New Button",
+        "title": "Button Oi",
         "items": [
-          "commandButtonTest"
+          "commandButtonOiPrimary",
+          "commandButtonOiPrimaryDisabled",
+          "-",
+          "commandButtonOiSecundary",
+          "commandButtonOiSecundaryIcon"
         ]
       },
       "commandChips",
@@ -68,11 +72,30 @@
       "shortcut": "cmd + shift + i"
     },
     {
-      "name" : "Button Test",
-      "identifier": "commandButtonTest",
-      "handler" : "commandButtonTest",
+      "name" : "Button Primary",
+      "identifier": "commandButtonOiPrimary",
+      "handler" : "commandButtonOiPrimary",
       "script" : "md.sketchscript"
     },
+    {
+      "name" : "Button Primary Disabled",
+      "identifier": "commandButtonOiPrimaryDisabled",
+      "handler" : "commandButtonOiPrimaryDisabled",
+      "script" : "md.sketchscript"
+    },
+    {
+      "name" : "Button Secundary",
+      "identifier": "commandButtonOiSecundary",
+      "handler" : "commandButtonOiSecundary",
+      "script" : "md.sketchscript"
+    },
+    {
+      "name" : "Button Secundary Icon",
+      "identifier": "commandButtonOiSecundaryIcon",
+      "handler" : "commandButtonOiSecundaryIcon",
+      "script" : "md.sketchscript"
+    },
+
     {
       "name": "Flat Button",
       "identifier": "commandButtonFlat",

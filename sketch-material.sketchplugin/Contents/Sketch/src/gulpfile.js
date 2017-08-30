@@ -6,6 +6,7 @@ var gulp = require('gulp'),
   inject = require('gulp-inject-string'),
   runSequence = require('run-sequence'),
   clean = require('gulp-clean'),
+  shell = require('gulp-shell'),
   path = require('path');
 
 var browserSync = require('browser-sync').create();
@@ -62,12 +63,13 @@ gulp.task('inject:links' , function(){
 
 
 gulp.task('update', function(){
-  runSequence(
-    'clean',
+  return runSequence(
+    'scripts',
+    'less',
     'copy:html:tmp' ,
     'inject:links',
     'copy:html',
-    'clean'
+    'copy:plugin'
   )
 })
 
@@ -89,13 +91,26 @@ gulp.task('copy:html:tmp', function(){
     .pipe(gulp.dest('../scripts/tmp/'))
 })
 
+var originDirectory = "../../../../sketch-material.sketchplugin";
+var destDirectory = "$HOME/Library/Application\\ Support/"
++ "com.bohemiancoding.sketch3/Plugins/";
+
+var command = "cp -R " + originDirectory + ' ' + destDirectory;
+
+gulp.task('copy:plugin', shell.task(
+  command
+))
 
 gulp.task('watch', function () {
   browserSync.init({
       server: "../scripts/panel",
       port: 8080
   });
-  gulp.watch(['../scripts/**/*.*', '!../scripts/tmp/'], ['update']).on('change', browserSync.reload);
-  gulp.watch(['**/*.js', '!gulpfile.js'], ['scripts']).on('change', browserSync.reload);
-  gulp.watch(['**/*.less'], ['less']).on('change', browserSync.reload);
+  gulp.watch(
+    [ '../scripts/**/*.html',
+      '!../scripts/**/index.html',
+      '!../scripts/tmp/'
+    ], ['update']).on('change', browserSync.reload);
+  gulp.watch(['**/*.js', '!gulpfile.js'], ['update']).on('change', browserSync.reload);
+  gulp.watch(['**/*.less'], ['less']).on('update', browserSync.reload);
 });

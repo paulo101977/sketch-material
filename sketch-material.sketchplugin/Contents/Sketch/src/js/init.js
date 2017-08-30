@@ -53,8 +53,8 @@ var MD = {
           this.Chip().generateChips();
           break;
         //TODO: just for tests
-        case "generate-buttontest":
-          this.ButtonTest().generateChips();
+        case "generate-buttonoi":
+          this.ButtonOi().generateButtons(args);
           break;
         case "generate-dialogs":
           this.Dialog().generateDialogs();

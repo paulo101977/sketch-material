@@ -9,6 +9,7 @@
     "gulp-clean": "^0.3.2",
     "gulp-foreach": "^0.1.0",
     "gulp-inject-string": "^1.1.0",
+    "gulp-shell": "^0.6.3",
     "run-sequence": "^2.1.0"
   },
   "devDependencies": {

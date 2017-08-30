@@ -9,7 +9,7 @@ MD.extend({
 
     style = (!style || this.is(style, MSSharedStyle)) ? style : style[0];
 
-    if (style == false) {
+    if (style == false && color) {
       style = MSStyle.alloc().init();
 
       var color = MSColor.colorWithRed_green_blue_alpha(color.r, color.g, color.b, color.a),
@@ -28,11 +28,11 @@ MD.extend({
 
       sharedStyles.addSharedStyleWithName_firstInstance(name, style);
     }
-
     return (style.newInstance) ? style.newInstance() : style;
   },
 
   sharedTextStyle: function(name, color, alignment, fontFamily, fontSize, lineHeight, leading) {
+
     var sharedStyles = this.document.documentData().layerTextStyles(),
     style = this.find({
       key: "(name != NULL) && (name == %@)",
