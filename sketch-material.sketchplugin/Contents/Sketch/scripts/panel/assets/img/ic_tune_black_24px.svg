@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 46.2 (44496) - http://www.bohemiancoding.com/sketch -->
+    <title>ic_tune_black_24px</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="buttons" transform="translate(-617.000000, -360.000000)">
+            <g id="Group-2" transform="translate(486.000000, 333.000000)">
+                <g id="ic_tune_black_24px" transform="translate(128.000000, 24.000000)">
+                    <g id="Shape">
+                        <polygon points="0 0 24 0 24 24 0 24"></polygon>
+                        <path d="M3,17 L3,19 L9,19 L9,17 L3,17 Z M3,5 L3,7 L13,7 L13,5 L3,5 Z M13,21 L13,19 L21,19 L21,17 L13,17 L13,15 L11,15 L11,21 L13,21 Z M7,9 L7,11 L3,11 L3,13 L7,13 L7,15 L9,15 L9,9 L7,9 Z M21,13 L21,11 L11,11 L11,13 L21,13 Z M15,9 L17,9 L17,7 L21,7 L21,5 L17,5 L17,3 L15,3 L15,9 Z" fill="#D82482" fill-rule="nonzero"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

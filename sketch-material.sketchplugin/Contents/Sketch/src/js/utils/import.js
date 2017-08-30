@@ -102,14 +102,23 @@ MD.extend({
       layerStyles: [
               '..button-primary-primary-bg' ,
               '..button-secundary-secundary-bg',
-              '..button-primary-disabled-bg'
+              '..button-primary-disabled-bg',
+              '..button-secundary-icon-bg',
+              '..button-secundary-select-bg'
             ],
       textStyles: [
-          '..button-text-primary',
-          '..button-text-secundary',
-          '..button-text-disabled'
+          '..BUTTON-TEXT-PRIMARY',
+          '..BUTTON-TEXT-SECUNDARY',
+          '..BUTTON-TEXT-ICON',
+          '..BUTTON-TEXT-DISABLED'
       ]
     }
+
+    this.importSymbols('buttonsoi', [
+      'ic_shopping_basket' ,
+      'ic_tune_black_24px',
+      'ic_shopping_basket_black_24px'
+    ]);
     this.importSharedStyles(buttonsUrl, styles);
   },
 
@@ -493,6 +502,7 @@ sketchObjectFromArchiveData: function(archiveData) {
   /**
    *
    */
+   //TODO: get info about the symbols
   importSymbols: function (name, values, isRemote) {
     var symbolFilePath = this.resources + '/' + name + '.sketch';
     var symbolFilePathUrl = NSURL.fileURLWithPath(symbolFilePath);

@@ -16,7 +16,8 @@ function commandButtonRaisedDisabled(context) { MD.init(context, 'generate-butto
 function commandButtonOiPrimary(context) { MD.init(context, "generate-buttonoi", "primary,primary"); }
 function commandButtonOiPrimaryDisabled(context) { MD.init(context, "generate-buttonoi", "primary,disabled"); }
 function commandButtonOiSecundary(context) { MD.init(context, "generate-buttonoi", "secundary,secundary"); }
-function commandButtonOiSecundaryIcon(context) { MD.init(context, "generate-buttonoi", "primary,primary"); }
+function commandButtonOiSecundaryIcon(context) { MD.init(context, "generate-buttonoi", "secundary,icon"); }
+function commandButtonOiSecundarySelect(context) { MD.init(context, "generate-buttonoi", "secundary,select"); }
 
 
 // Chips

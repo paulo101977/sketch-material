@@ -29,7 +29,8 @@
           "commandButtonOiPrimaryDisabled",
           "-",
           "commandButtonOiSecundary",
-          "commandButtonOiSecundaryIcon"
+          "commandButtonOiSecundaryIcon",
+          "commandButtonOiSecundarySelect"
         ]
       },
       "commandChips",
@@ -95,7 +96,12 @@
       "handler" : "commandButtonOiSecundaryIcon",
       "script" : "md.sketchscript"
     },
-
+    {
+      "name" : "Button Secundary Select",
+      "identifier": "commandButtonOiSecundarySelect",
+      "handler" : "commandButtonOiSecundarySelect",
+      "script" : "md.sketchscript"
+    },
     {
       "name": "Flat Button",
       "identifier": "commandButtonFlat",

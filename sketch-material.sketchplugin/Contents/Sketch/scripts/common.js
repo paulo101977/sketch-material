@@ -525,6 +525,8 @@ MD.extend({
         var targetSymbols = this.documentData.allSymbols();
         for (var j = 0; j < targetSymbols.count(); j++) {
             var targetSymbol = targetSymbols.objectAtIndex(j);
+            log('targetSymbol.name() findSymbolByName\n')
+            log(targetSymbol.name() + '\n')
             if (targetSymbol.name().isEqualToString(symbolName)) {
                 return targetSymbol;
             }
@@ -1484,14 +1486,23 @@ MD.extend({
       layerStyles: [
               '..button-primary-primary-bg' ,
               '..button-secundary-secundary-bg',
-              '..button-primary-disabled-bg'
+              '..button-primary-disabled-bg',
+              '..button-secundary-icon-bg',
+              '..button-secundary-select-bg'
             ],
       textStyles: [
-          '..button-text-primary',
-          '..button-text-secundary',
-          '..button-text-disabled'
+          '..BUTTON-TEXT-PRIMARY',
+          '..BUTTON-TEXT-SECUNDARY',
+          '..BUTTON-TEXT-ICON',
+          '..BUTTON-TEXT-DISABLED'
       ]
     }
+
+    this.importSymbols('buttonsoi', [
+      'ic_shopping_basket' ,
+      'ic_tune_black_24px',
+      'ic_shopping_basket_black_24px'
+    ]);
     this.importSharedStyles(buttonsUrl, styles);
   },
 
@@ -1875,6 +1886,7 @@ sketchObjectFromArchiveData: function(archiveData) {
   /**
    *
    */
+   //TODO: get info about the symbols
   importSymbols: function (name, values, isRemote) {
     var symbolFilePath = this.resources + '/' + name + '.sketch';
     var symbolFilePathUrl = NSURL.fileURLWithPath(symbolFilePath);
@@ -2005,21 +2017,25 @@ MD['ButtonOi'] = function () {
   var _generateButtons;
 
   _getStyles = function (buttonType) {
-    var textStyle = '..button-text-primary', padding = 8;
+    var textStyle = '..BUTTON-TEXT-PRIMARY', padding = 8;
 
 
-    if (buttonType[0] == 'raised') {
-      textStyle = "..button-text-primary";
+    if (buttonType[0] == 'secundary') {
+      textStyle = "..BUTTON-TEXT-SECUNDARY";
       padding = 16;
     }
 
     if (buttonType[0] == 'primary') {
-      textStyle = "..button-text-primary";
+      textStyle = "..BUTTON-TEXT-PRIMARY";
       padding = 16;
     }
 
     if (buttonType[1] == 'disabled') {
-      textStyle = "..button-text-disabled";
+      textStyle = "..BUTTON-TEXT-DISABLED";
+    }
+
+    if (buttonType[1] == 'icon') {
+      textStyle = "..BUTTON-TEXT-ICON";
     }
 
     buttonType[1] = buttonType[1] ? "-" + buttonType[1] : '';
@@ -2054,10 +2070,6 @@ MD['ButtonOi'] = function () {
     var text = target.stringValue();
     buttonGroup.setName('button–' + text.toLowerCase().split(' ').join(''));
 
-    //TODO: remove if necessary
-    log('buttonGroup.style')
-    //log(buttonGroup.style.opacity())
-    //buttonGroup.style.setFill("#00000000");
 
     var buttonBgRect = MD.getRect(buttonBg);
 
@@ -2069,13 +2081,36 @@ MD['ButtonOi'] = function () {
     var width = targetRect.width;
     var height = targetRect.height;
 
+    //remote unecessary text on string
+    if(buttonType[1]) buttonType[1] = buttonType[1] + '';
+    if(buttonType[1].indexOf('-') != -1) buttonType[1] = buttonType[1].split('-')[1];
+
+    var pickedStyle = {
+      bg: MD.sharedLayerStyle("…chip-bg", MD.hexToNSColor('E0E0E0', 1)),
+      text: MD.sharedTextStyle("..BUTTON-TEXT-ICON", MD.hexToNSColor('D82482', 1)),
+      symbol: 'dark'
+    }
+
     //get oi size similar to sketch
     if(buttonType[0] == 'primary'){
       width = 344;
       height = 54;
-    } else {
-      width = width + BUTTON_STYLES.marginRight + BUTTON_STYLES.marginLeft;
-      height = height + BUTTON_STYLES.marginTop + BUTTON_STYLES.marginBottom;
+    }
+    else if(buttonType[1] == 'icon'
+      || buttonType[1] == '-icon'
+      || buttonType[1] == 'select'){
+      width = 168;
+      height = 72;
+    }
+    else if(buttonType[0] == 'secundary'){
+      width = 146;
+      height = 36;
+    }
+    else {
+      //width = width + BUTTON_STYLES.marginRight + BUTTON_STYLES.marginLeft;
+      //height = height + BUTTON_STYLES.marginTop + BUTTON_STYLES.marginBottom;
+      width = 168;
+      height = 72;
     }
 
     buttonBgRect.setWidth(width);
@@ -2089,7 +2124,32 @@ MD['ButtonOi'] = function () {
     targetRect.setX(targetRect.x + (width/2 - targetRect.width/2));
     targetRect.setY(targetRect.y +(height/2 - targetRect.height/2));
 
-    buttonGroup.addLayers([buttonBg, target]);
+    /*var targetSymbols = this.document.documentData().allSymbols();
+    for (var j = 0; j < targetSymbols.count(); j++) {
+        var targetSymbol = targetSymbols.objectAtIndex(j);
+        //if (targetSymbol.name().isEqualToString(symbolName)) {
+            //return targetSymbol;
+        //}
+        log(targetSymbol.name())
+        log('\n')
+    }*/
+
+    log('self.document')
+    log(self.document.documentData().allSymbols())
+
+    var basket = MD.findSymbolByName('ic_shopping_basket_black_24px');
+    var buttonBasket = basket.newSymbolInstance();
+
+    MD.getRect(buttonBasket).setX(targetRect.x + 12);
+    MD.getRect(buttonBasket).setY(targetRect.y + 4);
+
+     MD.findSymbolByName('');
+
+    if(buttonType[1] == 'icon') {
+      target.setStyle(pickedStyle.text);
+      buttonGroup.addLayers([buttonBg, target, buttonBasket])
+    }
+    else buttonGroup.addLayers([buttonBg, target]);
     buttonGroup.resizeToFitChildrenWithOption(0);
 
     target.select_byExpandingSelection(false, false);
