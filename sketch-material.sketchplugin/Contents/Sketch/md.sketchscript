@@ -19,6 +19,9 @@ function commandButtonOiSecundary(context) { MD.init(context, "generate-buttonoi
 function commandButtonOiSecundaryIcon(context) { MD.init(context, "generate-buttonoi", "secundary,icon"); }
 function commandButtonOiSecundarySelect(context) { MD.init(context, "generate-buttonoi", "secundary,select"); }
 
+//slider oi
+function commandSliderOi(context) { MD.init(context, "generate-slideroi"); }
+
 
 // Chips
 function commandChips(context) { MD.init(context, "generate-chips"); }

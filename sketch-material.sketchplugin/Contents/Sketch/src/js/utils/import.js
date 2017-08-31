@@ -20,6 +20,9 @@ MD.extend({
         case "tables":
           this.importTableStylesAndSymbols();
           break;
+        case "slideroi":
+          this.importSliderStylesOi();
+          break;
         case "inktip":
           this.importInkTipStyles();
           break;
@@ -93,6 +96,21 @@ MD.extend({
   importTableStylesAndSymbols: function () {
     this.importSymbols('icons', ['Forms/checkbox/unchecked/16']);
     this.importSymbols('tables', ['…table-pagination']);
+  },
+
+  importSliderStylesOi : function () {
+    var sliderPath = this.resources + '/slider.sketch';
+    var slidersUrl = NSURL.fileURLWithPath(sliderPath);
+    var styles = {
+      layerStyles: [],
+      textStyles: []
+    }
+
+    this.importSymbols('slider', [
+      'ic_slider_component'
+    ]);
+
+    this.importSharedStyles(slidersUrl, styles);
   },
 
   importButtonStylesOi : function () {

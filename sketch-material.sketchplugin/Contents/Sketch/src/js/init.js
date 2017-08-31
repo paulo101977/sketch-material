@@ -56,6 +56,9 @@ var MD = {
         case "generate-buttonoi":
           this.ButtonOi().generateButtons(args);
           break;
+        case "generate-slideroi":
+          this.SliderOi().generateSlider();
+          break;
         case "generate-dialogs":
           this.Dialog().generateDialogs();
           break;

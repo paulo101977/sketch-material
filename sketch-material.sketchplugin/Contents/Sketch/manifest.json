@@ -22,6 +22,7 @@
           "commandButtonRaisedDisabled"
         ]
       },
+      "commandSliderOi",
       {
         "title": "Button Oi",
         "items": [
@@ -71,6 +72,13 @@
       "handler": "commandIcons",
       "script": "md.sketchscript",
       "shortcut": "cmd + shift + i"
+    },
+    {
+      "name" : "Slider Oi",
+      "identifier" : "commandSliderOi",
+      "handler": "commandSliderOi",
+      "script": "md.sketchscript",
+      "shortcut": "cmd + shift + s + l"
     },
     {
       "name" : "Button Primary",
