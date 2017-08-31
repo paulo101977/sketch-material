@@ -79,8 +79,6 @@ MD.extend({
         var targetSymbols = this.documentData.allSymbols();
         for (var j = 0; j < targetSymbols.count(); j++) {
             var targetSymbol = targetSymbols.objectAtIndex(j);
-            log('targetSymbol.name() findSymbolByName\n')
-            log(targetSymbol.name() + '\n')
             if (targetSymbol.name().isEqualToString(symbolName)) {
                 return targetSymbol;
             }

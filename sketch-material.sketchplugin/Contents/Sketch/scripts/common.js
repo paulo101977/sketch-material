@@ -525,8 +525,6 @@ MD.extend({
         var targetSymbols = this.documentData.allSymbols();
         for (var j = 0; j < targetSymbols.count(); j++) {
             var targetSymbol = targetSymbols.objectAtIndex(j);
-            log('targetSymbol.name() findSymbolByName\n')
-            log(targetSymbol.name() + '\n')
             if (targetSymbol.name().isEqualToString(symbolName)) {
                 return targetSymbol;
             }
@@ -1479,30 +1477,22 @@ MD.extend({
     this.importSymbols('tables', ['…table-pagination']);
   },
 
-  importButtonStylesOi: function () {
+  importButtonStylesOi : function () {
     var buttonsPath = this.resources + '/buttonsoi.sketch';
     var buttonsUrl = NSURL.fileURLWithPath(buttonsPath);
     var styles = {
-      layerStyles: [
-              '..button-primary-primary-bg' ,
-              '..button-secundary-secundary-bg',
-              '..button-primary-disabled-bg',
-              '..button-secundary-icon-bg',
-              '..button-secundary-select-bg'
-            ],
-      textStyles: [
-          '..BUTTON-TEXT-PRIMARY',
-          '..BUTTON-TEXT-SECUNDARY',
-          '..BUTTON-TEXT-ICON',
-          '..BUTTON-TEXT-DISABLED'
-      ]
+      layerStyles: [],
+      textStyles: []
     }
 
     this.importSymbols('buttonsoi', [
-      'ic_shopping_basket' ,
-      'ic_tune_black_24px',
-      'ic_shopping_basket_black_24px'
+      'ic_button_primary',
+      'ic_button_select',
+      'ic_button_secundary',
+      'ic_button_icon',
+      'ic_button_primary_disabled'
     ]);
+
     this.importSharedStyles(buttonsUrl, styles);
   },
 
@@ -1549,7 +1539,6 @@ MD.extend({
    * @param {object} styles
    */
   removeExistingStyleNamesFromList: function (styles) {
-    //TODO: any problem from here
     var layerStyles = this.documentData.layerStyles(),
       textStyles = this.documentData.layerTextStyles(),
       result = {
@@ -1557,41 +1546,14 @@ MD.extend({
         textStyles: []
       };
 
-    log('styles')
-    log(styles)
-    log('layerStyles')
-    log(layerStyles)
-    log('textStyles')
-    log(textStyles)
-
     if (styles.layerStyles) {
       for (var i = 0; i < styles.layerStyles.length; i++) {
         var style = this.find({
           key: "(name != NULL) && (name == %@)",
           match: styles.layerStyles[i]
         }, layerStyles);
-        log('layer')
-        log(style)
         if (!style) {
           result.layerStyles.push(styles.layerStyles[i]);
-        } else {
-          style = (style + '');
-          if(style.indexOf('>') != -1 && style.indexOf('(') != -1){
-            style = (style + '')
-                      .split('>')[1]
-                      .split('(')[0]
-                      .trim();
-          } else if(style.indexOf('>') != -1){
-            style = (style + '')
-                      .split('>')[1]
-                      .trim();
-          } else if(style.indexOf('(') != -1){
-            style = (style + '')
-                      .split('(')[0]
-                      .trim();
-          }
-
-          result.layerStyles.push(style);
         }
       }
     }
@@ -1604,28 +1566,10 @@ MD.extend({
         }, textStyles);
         if (!style) {
           result.textStyles.push(styles.textStyles[i]);
-        } else {
-          style = (style + '');
-          if(style.indexOf('>') != -1 && style.indexOf('(') != -1){
-            style = (style + '')
-                      .split('>')[1]
-                      .split('(')[0]
-                      .trim();
-          } else if(style.indexOf('>') != -1){
-            style = (style + '')
-                      .split('>')[1]
-                      .trim();
-          } else if(style.indexOf('(') != -1){
-            style = (style + '')
-                      .split('(')[0]
-                      .trim();
-          }
-          result.textStyles.push(style);
         }
       }
     }
 
-    log(result)
     return result;
   },
 
@@ -1783,9 +1727,6 @@ sketchObjectFromArchiveData: function(archiveData) {
    */
   importSharedStyles: function (url, styles, all) {
 
-    log('importSharedStyles')
-    log(styles)
-
     styles = this.removeExistingStyleNamesFromList(styles);
 
     if ((styles.layerStyles.length < 1 && styles.textStyles.length < 1) && !all) {
@@ -1808,15 +1749,12 @@ sketchObjectFromArchiveData: function(archiveData) {
 
         for(var i = 0; i < layerStyleCount; i++) {
           var style = layerStyles.sharedStyleAtIndex(i);
-
           var findLayerStyle = this.find({
             key: "(name != NULL) && (name == %@)",
             match: style.name()
           }, docLayerStyles);
 
           if(findLayerStyle == 0) {
-            log('layerStyleCount')
-            log(style)
             docLayerStyles.addSharedStyleWithName_firstInstance(style.name(), style.style());
           }
         }
@@ -1832,9 +1770,7 @@ sketchObjectFromArchiveData: function(archiveData) {
 
           // log(style.name() + " — " + style.objectID());
 
-          if(!([boolValue findTextStyle] == 0)) {
-            log('textStyleStyleCount')
-            log(style)
+          if(findTextStyle == 0) {
             docTextStyles.addSharedStyleWithName_firstInstance(style.name(), style.style());
           }
         }
@@ -1848,13 +1784,7 @@ sketchObjectFromArchiveData: function(archiveData) {
             key: "(name != NULL) && (name == %@)",
             match: styles.layerStyles[i]
           }, layerStyles);
-
-          log('if styles.layerStyles')
-          log(style)
-          if(style != 0 && style.style)
-            this.documentData
-              .layerStyles()
-              .addSharedStyleWithName_firstInstance(styles.layerStyles[i], style.style());
+          this.documentData.layerStyles().addSharedStyleWithName_firstInstance(styles.layerStyles[i], style.style());
         }
       }
 
@@ -1865,18 +1795,7 @@ sketchObjectFromArchiveData: function(archiveData) {
             key: "(name != NULL) && (name == %@)",
             match: styles.textStyles[i]
           }, textStyles);
-
-          log('if styles.textStyles')
-          log(style)
-          if(style != 0){
-            log('style')
-            log(style.style())
-            this.documentData
-                .layerTextStyles()
-                .addSharedStyleWithName_firstInstance(styles.textStyles[i], style.style());
-          }
-
-
+          this.documentData.layerTextStyles().addSharedStyleWithName_firstInstance(styles.textStyles[i], style.style());
         }
       }
 
@@ -1886,7 +1805,6 @@ sketchObjectFromArchiveData: function(archiveData) {
   /**
    *
    */
-   //TODO: get info about the symbols
   importSymbols: function (name, values, isRemote) {
     var symbolFilePath = this.resources + '/' + name + '.sketch';
     var symbolFilePathUrl = NSURL.fileURLWithPath(symbolFilePath);
@@ -2061,11 +1979,11 @@ MD['ButtonOi'] = function () {
       buttonText = MD.addText();
 
     //set the style from sketch
-    var styleText = MD.sharedTextStyle(BUTTON_STYLES.textStyle);
-    if(styleText != 0) target.setStyle(styleText);
+    //var styleText = MD.sharedTextStyle(BUTTON_STYLES.textStyle);
+    //if(styleText != 0) target.setStyle(styleText);
 
-    var bgStyle = MD.sharedLayerStyle(BUTTON_STYLES.bgStyle);
-    if(bgStyle != 0) buttonBg.setStyle(MD.sharedLayerStyle(BUTTON_STYLES.bgStyle));
+    //var bgStyle = MD.sharedLayerStyle(BUTTON_STYLES.bgStyle);
+    //if(bgStyle != 0) buttonBg.setStyle(MD.sharedLayerStyle(BUTTON_STYLES.bgStyle));
 
     var text = target.stringValue();
     buttonGroup.setName('button–' + text.toLowerCase().split(' ').join(''));
@@ -2085,12 +2003,6 @@ MD['ButtonOi'] = function () {
     if(buttonType[1]) buttonType[1] = buttonType[1] + '';
     if(buttonType[1].indexOf('-') != -1) buttonType[1] = buttonType[1].split('-')[1];
 
-    var pickedStyle = {
-      bg: MD.sharedLayerStyle("…chip-bg", MD.hexToNSColor('E0E0E0', 1)),
-      text: MD.sharedTextStyle("..BUTTON-TEXT-ICON", MD.hexToNSColor('D82482', 1)),
-      symbol: 'dark'
-    }
-
     //get oi size similar to sketch
     if(buttonType[0] == 'primary'){
       width = 344;
@@ -2098,6 +2010,7 @@ MD['ButtonOi'] = function () {
     }
     else if(buttonType[1] == 'icon'
       || buttonType[1] == '-icon'
+      || buttonType[1] == '-select'
       || buttonType[1] == 'select'){
       width = 168;
       height = 72;
@@ -2107,8 +2020,6 @@ MD['ButtonOi'] = function () {
       height = 36;
     }
     else {
-      //width = width + BUTTON_STYLES.marginRight + BUTTON_STYLES.marginLeft;
-      //height = height + BUTTON_STYLES.marginTop + BUTTON_STYLES.marginBottom;
       width = 168;
       height = 72;
     }
@@ -2124,32 +2035,41 @@ MD['ButtonOi'] = function () {
     targetRect.setX(targetRect.x + (width/2 - targetRect.width/2));
     targetRect.setY(targetRect.y +(height/2 - targetRect.height/2));
 
-    /*var targetSymbols = this.document.documentData().allSymbols();
-    for (var j = 0; j < targetSymbols.count(); j++) {
-        var targetSymbol = targetSymbols.objectAtIndex(j);
-        //if (targetSymbol.name().isEqualToString(symbolName)) {
-            //return targetSymbol;
-        //}
-        log(targetSymbol.name())
-        log('\n')
-    }*/
 
-    log('self.document')
-    log(self.document.documentData().allSymbols())
+     //MD.findSymbolByName('');
 
-    var basket = MD.findSymbolByName('ic_shopping_basket_black_24px');
-    var buttonBasket = basket.newSymbolInstance();
+    var icon;
 
-    MD.getRect(buttonBasket).setX(targetRect.x + 12);
-    MD.getRect(buttonBasket).setY(targetRect.y + 4);
-
-     MD.findSymbolByName('');
-
-    if(buttonType[1] == 'icon') {
-      target.setStyle(pickedStyle.text);
-      buttonGroup.addLayers([buttonBg, target, buttonBasket])
+    if(buttonType[1] == 'icon'){
+      icon = MD.findSymbolByName('ic_button_icon');
     }
-    else buttonGroup.addLayers([buttonBg, target]);
+    else if(buttonType[0] == 'secundary' && buttonType[1] == 'secundary'){
+      icon = MD.findSymbolByName('ic_button_secundary');
+    }
+    else if(buttonType[0] == 'primary' && buttonType[1] == 'primary'){
+      icon = MD.findSymbolByName('ic_button_primary');
+    }
+    else if(buttonType[1] == 'disabled'){
+      icon = MD.findSymbolByName('ic_button_primary_disabled');
+    }
+    else if(buttonType[1] == 'select'){
+      icon = MD.findSymbolByName('ic_button_select');
+    }
+
+    if(icon && icon != 0){
+      log('icon')
+      log(icon)
+      var button = icon.newSymbolInstance();
+
+      log('button name')
+      log(button.name())
+
+      MD.getRect(button).setX(targetRect.x + 12);
+      MD.getRect(button).setY(targetRect.y + 4);
+      //target.setStyle(pickedStyle.text);
+      buttonGroup.addLayers([button])
+    }
+
     buttonGroup.resizeToFitChildrenWithOption(0);
 
     target.select_byExpandingSelection(false, false);

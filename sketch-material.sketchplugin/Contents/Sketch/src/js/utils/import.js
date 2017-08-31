@@ -95,30 +95,22 @@ MD.extend({
     this.importSymbols('tables', ['…table-pagination']);
   },
 
-  importButtonStylesOi: function () {
+  importButtonStylesOi : function () {
     var buttonsPath = this.resources + '/buttonsoi.sketch';
     var buttonsUrl = NSURL.fileURLWithPath(buttonsPath);
     var styles = {
-      layerStyles: [
-              '..button-primary-primary-bg' ,
-              '..button-secundary-secundary-bg',
-              '..button-primary-disabled-bg',
-              '..button-secundary-icon-bg',
-              '..button-secundary-select-bg'
-            ],
-      textStyles: [
-          '..BUTTON-TEXT-PRIMARY',
-          '..BUTTON-TEXT-SECUNDARY',
-          '..BUTTON-TEXT-ICON',
-          '..BUTTON-TEXT-DISABLED'
-      ]
+      layerStyles: [],
+      textStyles: []
     }
 
     this.importSymbols('buttonsoi', [
-      'ic_shopping_basket' ,
-      'ic_tune_black_24px',
-      'ic_shopping_basket_black_24px'
+      'ic_button_primary',
+      'ic_button_select',
+      'ic_button_secundary',
+      'ic_button_icon',
+      'ic_button_primary_disabled'
     ]);
+
     this.importSharedStyles(buttonsUrl, styles);
   },
 
@@ -165,7 +157,6 @@ MD.extend({
    * @param {object} styles
    */
   removeExistingStyleNamesFromList: function (styles) {
-    //TODO: any problem from here
     var layerStyles = this.documentData.layerStyles(),
       textStyles = this.documentData.layerTextStyles(),
       result = {
@@ -173,41 +164,14 @@ MD.extend({
         textStyles: []
       };
 
-    log('styles')
-    log(styles)
-    log('layerStyles')
-    log(layerStyles)
-    log('textStyles')
-    log(textStyles)
-
     if (styles.layerStyles) {
       for (var i = 0; i < styles.layerStyles.length; i++) {
         var style = this.find({
           key: "(name != NULL) && (name == %@)",
           match: styles.layerStyles[i]
         }, layerStyles);
-        log('layer')
-        log(style)
         if (!style) {
           result.layerStyles.push(styles.layerStyles[i]);
-        } else {
-          style = (style + '');
-          if(style.indexOf('>') != -1 && style.indexOf('(') != -1){
-            style = (style + '')
-                      .split('>')[1]
-                      .split('(')[0]
-                      .trim();
-          } else if(style.indexOf('>') != -1){
-            style = (style + '')
-                      .split('>')[1]
-                      .trim();
-          } else if(style.indexOf('(') != -1){
-            style = (style + '')
-                      .split('(')[0]
-                      .trim();
-          }
-
-          result.layerStyles.push(style);
         }
       }
     }
@@ -220,28 +184,10 @@ MD.extend({
         }, textStyles);
         if (!style) {
           result.textStyles.push(styles.textStyles[i]);
-        } else {
-          style = (style + '');
-          if(style.indexOf('>') != -1 && style.indexOf('(') != -1){
-            style = (style + '')
-                      .split('>')[1]
-                      .split('(')[0]
-                      .trim();
-          } else if(style.indexOf('>') != -1){
-            style = (style + '')
-                      .split('>')[1]
-                      .trim();
-          } else if(style.indexOf('(') != -1){
-            style = (style + '')
-                      .split('(')[0]
-                      .trim();
-          }
-          result.textStyles.push(style);
         }
       }
     }
 
-    log(result)
     return result;
   },
 
@@ -399,9 +345,6 @@ sketchObjectFromArchiveData: function(archiveData) {
    */
   importSharedStyles: function (url, styles, all) {
 
-    log('importSharedStyles')
-    log(styles)
-
     styles = this.removeExistingStyleNamesFromList(styles);
 
     if ((styles.layerStyles.length < 1 && styles.textStyles.length < 1) && !all) {
@@ -424,15 +367,12 @@ sketchObjectFromArchiveData: function(archiveData) {
 
         for(var i = 0; i < layerStyleCount; i++) {
           var style = layerStyles.sharedStyleAtIndex(i);
-
           var findLayerStyle = this.find({
             key: "(name != NULL) && (name == %@)",
             match: style.name()
           }, docLayerStyles);
 
           if(findLayerStyle == 0) {
-            log('layerStyleCount')
-            log(style)
             docLayerStyles.addSharedStyleWithName_firstInstance(style.name(), style.style());
           }
         }
@@ -448,9 +388,7 @@ sketchObjectFromArchiveData: function(archiveData) {
 
           // log(style.name() + " — " + style.objectID());
 
-          if(!([boolValue findTextStyle] == 0)) {
-            log('textStyleStyleCount')
-            log(style)
+          if(findTextStyle == 0) {
             docTextStyles.addSharedStyleWithName_firstInstance(style.name(), style.style());
           }
         }
@@ -464,13 +402,7 @@ sketchObjectFromArchiveData: function(archiveData) {
             key: "(name != NULL) && (name == %@)",
             match: styles.layerStyles[i]
           }, layerStyles);
-
-          log('if styles.layerStyles')
-          log(style)
-          if(style != 0 && style.style)
-            this.documentData
-              .layerStyles()
-              .addSharedStyleWithName_firstInstance(styles.layerStyles[i], style.style());
+          this.documentData.layerStyles().addSharedStyleWithName_firstInstance(styles.layerStyles[i], style.style());
         }
       }
 
@@ -481,18 +413,7 @@ sketchObjectFromArchiveData: function(archiveData) {
             key: "(name != NULL) && (name == %@)",
             match: styles.textStyles[i]
           }, textStyles);
-
-          log('if styles.textStyles')
-          log(style)
-          if(style != 0){
-            log('style')
-            log(style.style())
-            this.documentData
-                .layerTextStyles()
-                .addSharedStyleWithName_firstInstance(styles.textStyles[i], style.style());
-          }
-
-
+          this.documentData.layerTextStyles().addSharedStyleWithName_firstInstance(styles.textStyles[i], style.style());
         }
       }
 
@@ -502,7 +423,6 @@ sketchObjectFromArchiveData: function(archiveData) {
   /**
    *
    */
-   //TODO: get info about the symbols
   importSymbols: function (name, values, isRemote) {
     var symbolFilePath = this.resources + '/' + name + '.sketch';
     var symbolFilePathUrl = NSURL.fileURLWithPath(symbolFilePath);
