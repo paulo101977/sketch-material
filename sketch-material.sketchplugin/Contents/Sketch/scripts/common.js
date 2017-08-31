@@ -1978,26 +1978,13 @@ MD['ButtonOi'] = function () {
       buttonBg = MD.addShape(),
       buttonText = MD.addText();
 
-    //set the style from sketch
-    //var styleText = MD.sharedTextStyle(BUTTON_STYLES.textStyle);
-    //if(styleText != 0) target.setStyle(styleText);
+    var name = '';
 
-    //var bgStyle = MD.sharedLayerStyle(BUTTON_STYLES.bgStyle);
-    //if(bgStyle != 0) buttonBg.setStyle(MD.sharedLayerStyle(BUTTON_STYLES.bgStyle));
+    buttonGroup.setName('button–' +
+        (buttonType[0] + '' +  buttonType[1]).toLowerCase().split(' ').join(''));
 
-    var text = target.stringValue();
-    buttonGroup.setName('button–' + text.toLowerCase().split(' ').join(''));
-
-
-    var buttonBgRect = MD.getRect(buttonBg);
-
-    targetRect = MD.getRect(target);
-
-    buttonBgRect.setX(targetRect.x);
-    buttonBgRect.setY(targetRect.y);
-
-    var width = targetRect.width;
-    var height = targetRect.height;
+    name = 'button–' +
+        (buttonType[0] + '' +  buttonType[1]).toLowerCase().split(' ').join('');
 
     //remote unecessary text on string
     if(buttonType[1]) buttonType[1] = buttonType[1] + '';
@@ -2024,21 +2011,11 @@ MD['ButtonOi'] = function () {
       height = 72;
     }
 
-    buttonBgRect.setWidth(width);
-    buttonBgRect.setHeight(height);
-
-    target.setStringValue(text.toUpperCase());
-
     buttonBg.layers().firstObject().setCornerRadiusFromComponents("2")
 
-    //center text
-    targetRect.setX(targetRect.x + (width/2 - targetRect.width/2));
-    targetRect.setY(targetRect.y +(height/2 - targetRect.height/2));
-
-
-     //MD.findSymbolByName('');
 
     var icon;
+    var button;
 
     if(buttonType[1] == 'icon'){
       icon = MD.findSymbolByName('ic_button_icon');
@@ -2057,27 +2034,15 @@ MD['ButtonOi'] = function () {
     }
 
     if(icon && icon != 0){
-      log('icon')
-      log(icon)
-      var button = icon.newSymbolInstance();
-
-      log('button name')
-      log(button.name())
-
-      MD.getRect(button).setX(targetRect.x + 12);
-      MD.getRect(button).setY(targetRect.y + 4);
-      //target.setStyle(pickedStyle.text);
-      buttonGroup.addLayers([button])
+      button = icon.newSymbolInstance();
+      button.setName(name);
+      MD.getRect(button).setX(buttonGroup.x + 12);
+      MD.getRect(button).setY(buttonGroup.y + 4);
     }
 
-    buttonGroup.resizeToFitChildrenWithOption(0);
 
-    target.select_byExpandingSelection(false, false);
-    buttonGroup.select_byExpandingSelection(true, true);
+    MD.current.addLayers([button]);
 
-    MD.current.addLayers([buttonGroup]);
-
-    MD.current.removeLayer(target);
 
   }
 
@@ -2085,15 +2050,8 @@ MD['ButtonOi'] = function () {
     var buttonType = type.split(',');
     MD.import('buttonoi');
 
-    if (selection.count() <= 0) {
-      MD.message("Select a text layer to make button");
-      return false;
-    }
+    _makeButtons(null, buttonType);
 
-    for (var i = 0; i < selection.count(); i++) {
-      var target = selection[i];
-      _makeButtons(target, buttonType);
-    }
   }
 
   return {
